@@ -107,6 +107,7 @@ public class RoutineService {
             routine.getExercises().forEach(exercise -> {
                 exercise.getRoutines().remove(routine);
             });
+            userRoutineRepository.deleteAllByRoutineId(routineId);
             routineRepository.delete(routine);
             return ResponseEntity.ok("\"Routine deleted successfully\"");
         } catch (Exception e) {

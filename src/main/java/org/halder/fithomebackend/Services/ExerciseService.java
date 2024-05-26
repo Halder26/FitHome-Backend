@@ -61,6 +61,18 @@ public class ExerciseService {
 
     public ResponseEntity<String> removeExerciseById(Long exerciseId) {
         try {
+            Exercise exercise = exerciseRepository.findById(exerciseId).orElse(null);
+            if (exercise == null) {
+                return ResponseEntity.notFound().build();
+            }
+            if(exercise.getImage_url()!=null && !exercise.getImage_url().isEmpty())
+            {
+                fileStorageService.deleteFile(exercise.getImage_url());
+            }
+            exercise.getRoutines().forEach(routine -> {
+                routine.getExercises().remove(exercise);
+                routineRepository.save(routine);
+            });
             exerciseRepository.deleteById(exerciseId);
             return ResponseEntity.ok("\"Exercise deleted successfully with ID: " + exerciseId + "\"");
         } catch (Exception e) {
